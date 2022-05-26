@@ -9,10 +9,12 @@ const put = (key, value) => {
     let dataCursor = dataCopy
     while(keyPath.length > 0) {
         const keySegment = keyPath.shift()
-        
-        if (!dataCursor[keySegment]) dataCursor[keySegment] =  {}
-
-        if (keyPath.length == 0) dataCursor[keySegment] = value
+        if (keyPath.length == 0) {
+            dataCursor[keySegment] = value
+        } else { 
+            if (!dataCursor[keySegment]) dataCursor[keySegment] =  {}    
+            dataCursor = dataCursor[keySegment]
+        }
     }
 }
 
@@ -21,10 +23,12 @@ const get = (key) => {
     let dataCursor = dataCopy
     while(keyPath.length > 0) {
         const keySegment = keyPath.shift()
-        
-        if (!dataCursor[keySegment]) return undefined
-
-        if (keyPath.length == 0) return dataCursor[keySegment]
+        if (keyPath.length == 0) {
+            return dataCursor[keySegment]
+        } else { 
+            if (!dataCursor[keySegment]) return undefined   
+            dataCursor = dataCursor[keySegment]
+        }
     }
 }
 
@@ -33,10 +37,11 @@ const destroy = (key) => {
     let dataCursor = dataCopy
     while(keyPath.length > 0) {
         const keySegment = keyPath.shift()
-        
-        if (!dataCursor[keySegment]) dataCursor[keySegment] =  {}
-
-        if (keyPath.length == 0) dataCursor[keySegment] = undefined
+        if (keyPath.length == 0) {
+            dataCursor[keySegment] = undefined
+        } else { 
+            if (dataCursor[keySegment]) dataCursor = dataCursor[keySegment]
+        }
     }
 }
 

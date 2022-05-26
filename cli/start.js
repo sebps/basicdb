@@ -1,3 +1,3 @@
-const { start } = require('../core')
+pocdb = require('../core')
 
-start({ path: './data' })
+pocdb.start({ path: './data' })
