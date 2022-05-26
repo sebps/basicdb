@@ -1,5 +1,5 @@
 {
-  "name": "expressdb",
+  "name": "readydb",
   "version": "1.0.0",
   "description": "A lightweight key/value db.",
   "main": "index.js",
@@ -8,10 +8,10 @@
   },
   "author": "sebps",
   "license": "MIT",
-  "homepage": "https://github.com/sebps/expressdb",
+  "homepage": "https://github.com/sebps/readydb",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebps/expressdb.git"
+    "url": "https://github.com/sebps/readydb.git"
   },
   "devDependencies": {
     "chai": "^4.3.4",

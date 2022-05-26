@@ -1,6 +1,6 @@
-# expressDB
+# readydb
 
-expressdb
+readydb
 ==========
 
 Lightweight key/value database.
@@ -16,20 +16,20 @@ Lightweight key/value database.
 
 ### Installation
 ```sh
-$ npm install expressdb
+$ npm install readydb
 ```
 
 ### Usage
 ```
-const expressdb = require("expressdb")
+const readydb = require("readydb")
 
 const configuration = { path: "./data" }
 
-expressdb.start(configuration)
-expressdb.put("key", "value")
-expressdb.get("key")
-expressdb.destroy("key")
-expressdb.stop()
+readydb.start(configuration)
+readydb.put("key", "value")
+readydb.get("key")
+readydb.destroy("key")
+readydb.stop()
 ```
 
 ### Parameters
@@ -41,4 +41,4 @@ An object defining the path of the persisted data.
 
 MIT
 
-[npm-url]: https://www.npmjs.com/package/expressdb
+[npm-url]: https://www.npmjs.com/package/readydb
