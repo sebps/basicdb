@@ -1,5 +1,5 @@
 {
-  "name": "basicdb",
+  "name": "expressdb",
   "version": "1.0.0",
   "description": "A lightweight key/value db.",
   "main": "index.js",
@@ -8,6 +8,11 @@
   },
   "author": "sebps",
   "license": "MIT",
+  "homepage": "https://github.com/sebps/expressdb",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sebps/expressdb.git"
+  },
   "devDependencies": {
     "chai": "^4.3.4",
     "mocha": "^8.4.0"

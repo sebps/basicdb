@@ -1,6 +1,6 @@
-# BasicDB
+# expressDB
 
-basicdb
+expressdb
 ==========
 
 Lightweight key/value database.
@@ -16,20 +16,20 @@ Lightweight key/value database.
 
 ### Installation
 ```sh
-$ npm install basicdb
+$ npm install expressdb
 ```
 
 ### Usage
 ```
-const basicdb = require("basicdb")
+const expressdb = require("expressdb")
 
 const configuration = { path: "./data" }
 
-basicdb.start(configuration)
-basicdb.put("key", "value")
-basicdb.get("key")
-basicdb.destroy("key")
-basicdb.stop()
+expressdb.start(configuration)
+expressdb.put("key", "value")
+expressdb.get("key")
+expressdb.destroy("key")
+expressdb.stop()
 ```
 
 ### Parameters
@@ -41,4 +41,4 @@ An object defining the path of the persisted data.
 
 MIT
 
-[npm-url]: https://www.npmjs.com/package/basicdb
+[npm-url]: https://www.npmjs.com/package/expressdb

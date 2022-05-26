@@ -1,7 +1,7 @@
 const { start, stop, get, put, destroy } = require("../core")
 const expect = require('chai').expect;
 
-describe('Basic Features', function() {
+describe('express Features', function() {
   this.timeout(60000)
 
   describe('Start / Stop database: ', function() {
