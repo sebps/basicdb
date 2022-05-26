@@ -1,5 +1,5 @@
 {
-  "name": "readydb",
+  "name": "pocdb",
   "version": "1.0.0",
   "description": "A lightweight key/value db.",
   "main": "index.js",
@@ -8,10 +8,10 @@
   },
   "author": "sebps",
   "license": "MIT",
-  "homepage": "https://github.com/sebps/readydb",
+  "homepage": "https://github.com/sebps/pocdb",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebps/readydb.git"
+    "url": "https://github.com/sebps/pocdb.git"
   },
   "devDependencies": {
     "chai": "^4.3.4",

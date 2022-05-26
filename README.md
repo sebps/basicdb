@@ -1,6 +1,6 @@
-# readydb
+# pocdb
 
-readydb
+pocdb
 ==========
 
 Lightweight key/value database.
@@ -16,20 +16,20 @@ Lightweight key/value database.
 
 ### Installation
 ```sh
-$ npm install readydb
+$ npm install pocdb
 ```
 
 ### Usage
 ```
-const readydb = require("readydb")
+const pocdb = require("pocdb")
 
 const configuration = { path: "./data" }
 
-readydb.start(configuration)
-readydb.put("key", "value")
-readydb.get("key")
-readydb.destroy("key")
-readydb.stop()
+pocdb.start(configuration)
+pocdb.put("key", "value")
+pocdb.get("key")
+pocdb.destroy("key")
+pocdb.stop()
 ```
 
 ### Parameters
@@ -41,4 +41,4 @@ An object defining the path of the persisted data.
 
 MIT
 
-[npm-url]: https://www.npmjs.com/package/readydb
+[npm-url]: https://www.npmjs.com/package/pocdb
