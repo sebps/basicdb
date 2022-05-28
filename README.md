@@ -29,6 +29,7 @@ pocdb.start(configuration)
 pocdb.put("key", "value")
 pocdb.get("key")
 pocdb.destroy("key")
+pocdb.backup()
 pocdb.stop()
 ```
 
