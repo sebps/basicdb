@@ -17,7 +17,7 @@ const doPut = (key, value, data) => {
             dataCursor[keySegment] = value
         } else { 
             if (!dataCursor[keySegment]) dataCursor[keySegment] =  {}  
-            if (Object.prototype.toString.call(dataCursor[keySegment] != '[object Object]')) dataCursor[keySegment] =  {}
+            if (Object.prototype.toString.call(dataCursor[keySegment]) != '[object Object]') dataCursor[keySegment] =  {}
             dataCursor = dataCursor[keySegment]
         }
     }
