@@ -1,6 +1,6 @@
 {
   "name": "pocdb",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A lightweight key/value db.",
   "main": "index.js",
   "scripts": {
