@@ -55,8 +55,6 @@ const get = (key) => {
 
 const put = (key, value) => {
     doPut(key, value, dataCopy)
-    console.log("put")
-    console.log(dataCopy)
     appendFileSync(logsLocation, `${Date.now()}:${key}:put\n`)
     syncData(key)
 }
@@ -67,9 +65,7 @@ const destroy = (key) => {
     syncData(key)
 }
 
-const syncData = (key) => {
-    console.log("syncing data ...")
-    
+const syncData = (key) => {    
     // sync local data copy with shared data
     const startSync = Date.now()
     
@@ -100,11 +96,6 @@ const syncData = (key) => {
 
     lastSync = startSync
     
-    console.log("data copy at the end of syncing : ")
-    console.log(dataCopy)
-    console.log("data location : ")
-    console.log(dataLocation)
-
     try {
         writeFileSync(dataLocation, JSON.stringify(dataCopy))
     } catch(err) {
@@ -113,8 +104,6 @@ const syncData = (key) => {
 }
 
 const cleanLogs = () => {
-    console.log("cleaning logs ...")
-
     const now = Date.now()
 
     // clean logs older than 2 * syncFrequency ( so that everyone syncing with db at syncFrequency should already be synchronized with those logs )    
@@ -158,12 +147,12 @@ const start = ({ path }) => {
     }, syncFrequency)
 
     process.on('SIGINT', () => {
-        console.log(`SIGINT : persisting db at ${dataLocation} ...`)
+        console.log(`pocdb : persisting db at ${dataLocation} ...`)
         stop()
     })
 
     process.on('SIGTERM', () => {
-        console.log(`SIGTERM : persisting db at ${dataLocation} ...`)
+        console.log(`pocdb : persisting db at ${dataLocation} ...`)
         stop()
     })
 }
