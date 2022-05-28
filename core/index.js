@@ -66,7 +66,7 @@ const destroy = (key) => {
     syncData(key)
 }
 
-const syncData = (key) => {    
+const syncData = (updatedKey) => {    
     // sync local data copy with shared data
     const startSync = Date.now()
     
@@ -80,7 +80,7 @@ const syncData = (key) => {
             // loop over logs to detect most recent versions of data records
             for (const log of logs) {
                 const [ logTimestamp, logKey, logOp ] = log.split(':')
-                if ( logTimestamp > lastSync && logKey != key) {
+                if ( logTimestamp > lastSync && logKey != updatedKey) {
                     switch(logOp) {
                         case 'put':
                             const lastValue = doGet(logKey, lastDataCopy)
@@ -97,11 +97,8 @@ const syncData = (key) => {
 
     lastSync = startSync
     
-    try {
-        writeFileSync(dataLocation, JSON.stringify(dataCopy))
-    } catch(err) {
-        console.log(err)
-    }
+    // persist only if a key was updated locally
+    if (updatedKey) writeFileSync(dataLocation, JSON.stringify(dataCopy))
 }
 
 const cleanLogs = () => {
