@@ -1,4 +1,4 @@
-const { readFileSync, writeFileSync, existsSync, appendFileSync } = require("fs")
+const { readFileSync, writeFileSync, existsSync, appendFileSync, copyFileSync } = require("fs")
 const syncFrequency = 1000
 
 var dataCopy
@@ -64,6 +64,11 @@ const destroy = (key) => {
     doDestroy(key, dataCopy)
     appendFileSync(logsLocation, `${Date.now()}:${key}:destroy\n`)
     syncData(key)
+}
+
+const backup = () => {    
+    // generate a timestamped copy of data
+    if (existsSync(dataLocation)) copyFileSync(dataLocation, `${dataLocation}.${Date.now()}`)
 }
 
 const syncData = (updatedKey) => {    
@@ -162,4 +167,4 @@ const stop = () => {
     syncData()
 }
 
-module.exports = { start, stop, get, put, destroy }
+module.exports = { start, stop, get, put, destroy, backup }
