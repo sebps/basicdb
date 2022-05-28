@@ -1,5 +1,5 @@
 const { readFileSync, writeFileSync, existsSync, appendFileSync } = require("fs")
-const syncFrequency = 30000
+const syncFrequency = 1000
 
 var dataCopy
 var dataLocation
@@ -16,7 +16,8 @@ const doPut = (key, value, data) => {
         if (keyPath.length == 0) {
             dataCursor[keySegment] = value
         } else { 
-            if (!dataCursor[keySegment]) dataCursor[keySegment] =  {}    
+            if (!dataCursor[keySegment]) dataCursor[keySegment] =  {}  
+            if (Object.prototype.toString.call(dataCursor[keySegment] != '[object Object]')) dataCursor[keySegment] =  {}
             dataCursor = dataCursor[keySegment]
         }
     }
@@ -160,7 +161,7 @@ const start = ({ path }) => {
 const stop = () => {
     if(syncDataTick) clearInterval(syncDataTick)
     if(cleanLogsTick) clearInterval(cleanLogsTick)
-
+    cleanLogs()
     syncData()
 }
 
