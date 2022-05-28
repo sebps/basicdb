@@ -1,3 +1,3 @@
-const { start, stop, get, put, destroy } = require('./core')
+const { start, stop, get, put, destroy, backup } = require('./core')
 
-module.exports = { start, stop, get, put, destroy }
+module.exports = { start, stop, get, put, destroy, backup }
