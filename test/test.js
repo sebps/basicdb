@@ -1,7 +1,7 @@
-const { start, stop, get, put, destroy } = require("../core")
+const { start, stop, get, put, destroy } = require("../lib")
 const expect = require('chai').expect;
 
-describe('express Features', function() {
+describe('pocdb features', function() {
   this.timeout(60000)
 
   describe('Start / Stop database: ', function() {
