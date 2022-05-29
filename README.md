@@ -80,6 +80,12 @@ For any HTTP request ( exepting for root path ), the request path will be transl
 Any "/" will be converted as an internal key separator in the data tree structure.
 For example an HTTP operation on "/users/1" path will be internally processed as an operation on "users.1" pocdb key.
 
+### Data explorer access 
+Data explorer web interface is available under reserved path "/_explorer" 
+
+### Database access 
+Database HTTP access is available under reserved path "/_database" 
+
 ### Create / Update 
 Put a value at a specific key
 
