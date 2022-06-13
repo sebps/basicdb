@@ -83,6 +83,9 @@ For example an HTTP operation on "/users/1" path will be internally processed as
 ### Data explorer access 
 Data explorer web interface is available under reserved path "/_explorer" 
 
+The web interface is a fork of project "react-json-editor".
+Original project page at https://github.com/sujinleeme/react-json-editor
+
 ### Database access 
 Database HTTP access is available under reserved path "/_database" 
 
