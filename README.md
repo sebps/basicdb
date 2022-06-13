@@ -75,11 +75,6 @@ The listening port of pocdb http server ( default 2222 )
 ## HTTP
 At pocdb start an http server is also started at the configured address and port to provide CRUD access to pocdb data. 
 
-### Path convention
-For any HTTP request ( exepting for root path ), the request path will be translated into a specific db key. 
-Any "/" will be converted as an internal key separator in the data tree structure.
-For example an HTTP operation on "/users/1" path will be internally processed as an operation on "users.1" pocdb key.
-
 ### Data explorer access 
 Data explorer web interface is available under reserved path "/_explorer" 
 
@@ -89,42 +84,47 @@ Original project page at https://github.com/sujinleeme/react-json-editor
 ### Database access 
 Database HTTP access is available under reserved path "/_database" 
 
-### Create / Update 
+#### Path convention
+For any HTTP request ( exepting for root path ), the request path will be translated into a specific db key. 
+Any "/" will be converted as an internal key separator in the data tree structure.
+For example an HTTP operation on "/users/1" path will be internally processed as an operation on "users.1" pocdb key.
+
+#### Create / Update 
 Put a value at a specific key
 
-### Method
+##### Method
 PUT / POST
 
-#### Body
+##### Body
 {
     "value": <ANY_VALUE>
 }
 
-#### Response
+##### Response
 {
     "statusCode": 200,
     "message": "key updated"
 }
 
-### Read 
+#### Read 
 Read a value at a specific key
 
-#### Method
+##### Method
 GET
 
-#### Response
+##### Response
 {
     "statusCode": 200,
     "value": <ANY_VALUE>
 }
 
-### Delete
+#### Delete
 Delete a value at a specific key
 
-#### Method
+##### Method
 DELETE
 
-#### Response
+##### Response
 {
     "statusCode": 200,
     "message": "key destroyed"
