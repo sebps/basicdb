@@ -85,9 +85,11 @@ Original project page at https://github.com/sujinleeme/react-json-editor
 Database HTTP access is available under reserved path "/_database" 
 
 #### Path convention
-For any HTTP request ( exepting for root path ), the request path will be translated into a specific db key. 
+For any database access HTTP request, the request subpath will be translated into a specific db key, starting after "/_database/" root path. 
 Any "/" will be converted as an internal key separator in the data tree structure.
-For example an HTTP operation on "/users/1" path will be internally processed as an operation on "users.1" pocdb key.
+For example an HTTP request ( GET / PUT / DELETE ) sent at "/_database/users/1" path will be internally processed as an equivalent CRUD operation on "users.1" key in the database.
+
+Note : Root path "/_database" PUT and DELETE requests won't update the database whereas GET request will fetch the whole database.   
 
 #### Create / Update 
 Put a value at a specific key
