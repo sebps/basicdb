@@ -4,23 +4,39 @@ import {
   CommandBar,
   ICommandBarItemProps,
   CommandButton,
-  // Checkbox,
   IIconProps,
+  Stack,
+  SearchBox,
+  Text,
 } from "@fluentui/react";
-import { Text } from "@fluentui/react/lib/Text";
+
+const filterIcon: IIconProps = { iconName: "Filter" };
 
 export interface ToolBarProps {
+  onClear: () => void;
+  onDownloadClick: () => void;
+  onSaveClick: () => void;
+  onSearch: (value: string) => void;
   onMinifyClick: () => void;
   onPrettifyClick: () => void;
   onClearClick: () => void;
   onAutoPrettifyChange: () => void;
-  onDownloadClick: () => void;
-  onSaveClick: () => void;
   onUploadClick: (fileContent: File) => void;
   onFixClick: () => void;
   isAutoPrettifyOn: boolean;
   isValidJson: boolean;
+  isReadOnly: boolean;
 }
+
+const containerStyles: React.CSSProperties = {
+  margin: "0 15px",
+};
+
+const itemStyles: React.CSSProperties = {
+  alignItems: "center",
+  display: "flex",
+  justifyContent: "center",
+};
 
 interface FileUploaderProps {
   onFileHandle: (fileContent: File) => void;
@@ -32,7 +48,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onFileHandle }) => {
 
   const handleUploadClick = () => {
     if (inputFileRef.current) {
-      // upload the same file
       inputFileRef.current.value = "";
       inputFileRef.current.click();
     }
@@ -63,27 +78,18 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onFileHandle }) => {
 };
 
 export const ToolBar: React.FC<ToolBarProps> = ({
-  // onMinifyClick,
-  // onPrettifyClick,
-  // isAutoPrettifyOn,
-  // onAutoPrettifyChange,
-  // onClearClick,
+  onClear,
   onDownloadClick,
   onSaveClick,
-  // onUploadClick,
-  // onFixClick,
+  onSearch,
   isValidJson,
+  isReadOnly,
 }) => {
+  console.log("rendering tool bar ...");
+  console.log("is read only : ");
+  console.log(isReadOnly);
+
   const leftItems: ICommandBarItemProps[] = [
-    {
-      key: "pocdb",
-      text: "POCDB",
-      disabled: true,
-    },
-    // {
-    //   key: "upload",
-    //   onRender: () => <FileUploader onFileHandle={onUploadClick} />,
-    // },
     {
       key: "download",
       text: "Download Database",
@@ -98,65 +104,52 @@ export const ToolBar: React.FC<ToolBarProps> = ({
       ariaLabel: "Grid view",
       iconProps: { iconName: "Save" },
       onClick: onSaveClick,
-      disabled: !isValidJson,
+      disabled: !isValidJson || isReadOnly,
     },
-    // {
-    //   key: "clear",
-    //   text: "Clear",
-    //   iconProps: { iconName: "Delete" },
-    //   onClick: onClearClick,
-    // },
-    // {
-    //   key: "fix",
-    //   text: "Fix",
-    //   iconProps: { iconName: "DeveloperTools" },
-    //   onClick: onFixClick,
-    //   disabled: isValidJson,
-    // },
-    // {
-    //   key: "minify",
-    //   text: "Minify",
-    //   iconProps: { iconName: "MinimumValue" },
-    //   onClick: onMinifyClick,
-    //   disabled: !isValidJson || isAutoPrettifyOn,
-    // },
-    // {
-    //   key: "prettify",
-    //   text: "Prettify",
-    //   iconProps: { iconName: "Code" },
-    //   onClick: onPrettifyClick,
-    //   disabled: !isValidJson || isAutoPrettifyOn,
-    // },
-    // {
-    //   key: "auto-prettify",
-    //   onRender: () => (
-    //     <CommandButton>
-    //       <Checkbox
-    //         label="Auto Prettify"
-    //         onChange={onAutoPrettifyChange}
-    //         checked={isAutoPrettifyOn}
-    //       />
-    //     </CommandButton>
-    //   ),
-    // },
   ];
 
   return (
-    <>
-      <CommandBar
-        styles={{
-          root: {
-            alignItems: "center",
-            // borderTop: "1px solid rgb(237, 235, 233)",
-          },
-        }}
-        items={leftItems}
-        ariaLabel="json content commands"
-      >
-        <Text variant="large" block>
+    <Stack horizontal style={containerStyles}>
+      <Stack.Item style={itemStyles}>
+        <Text variant="xLarge" block>
           POCDB
         </Text>
-      </CommandBar>
-    </>
+      </Stack.Item>
+      <Stack.Item style={itemStyles}>
+        <CommandBar
+          styles={{
+            root: {
+              alignItems: "center",
+            },
+          }}
+          items={leftItems}
+          ariaLabel="json content commands"
+        />
+      </Stack.Item>
+      <Stack.Item style={itemStyles}>
+        <SearchBox
+          placeholder="Filter DB Key"
+          iconProps={filterIcon}
+          onClear={(ev) => {
+            console.log(ev);
+            onClear();
+          }}
+          onChange={(_, newValue: string | undefined) => {
+            if (newValue !== undefined && newValue.length > 0) {
+              onSearch(newValue);
+            } else {
+              onClear();
+            }
+          }}
+          onSearch={(newValue: string | undefined) => {
+            if (newValue !== undefined && newValue.length > 0) {
+              onSearch(newValue);
+            } else {
+              onClear();
+            }
+          }}
+        />
+      </Stack.Item>
+    </Stack>
   );
 };

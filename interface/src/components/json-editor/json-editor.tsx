@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Stack, IStackStyles, MessageBar, MessageBarType } from "@fluentui/react";
 import Editor, { useMonaco, BeforeMount, OnMount, OnValidate } from "@monaco-editor/react";
 import dirtyJson from "dirty-json";
+import { flatten, unflatten } from "flat";
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
 import { useToggle } from "../../hooks";
@@ -55,10 +56,17 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
   const monaco = useMonaco();
   const [isAutoPrettifyOn, toggleAutoPrettifyOn] = useToggle(false);
   const [isValidJson, setIsValidJson] = useState<boolean>(false);
+  const [editorValue, setEditorValue] = useState<string>();
+  const [editorDefaultValue, setEditorDefaultValue] = useState<string>();
   const editorRef = useRef<RefObject | null>(null);
-  const prettyDefaultValue = defaultValue ? prettifyJsonString(defaultValue) : undefined;
   const [showSuccess, toggleShowSuccess] = useToggle(false);
   const [showError, toggleShowError] = useToggle(false);
+  const [isReadOnly, setIsReadOnly] = useState<boolean>(false);
+
+  useEffect(() => {
+    const prettyDefaultValue = defaultValue ? prettifyJsonString(defaultValue) : undefined;
+    setEditorDefaultValue(prettyDefaultValue);
+  }, [defaultValue]);
 
   useEffect(() => {
     if (success) {
@@ -195,6 +203,41 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
     value && onSave && onSave(value);
   };
 
+  const handleSearch = (searchedValue: string | undefined) => {
+    if (defaultValue === undefined) return;
+
+    if (searchedValue !== undefined) {
+      setIsReadOnly(true);
+
+      const flattenedUnfilteredValue = flatten(JSON.parse(defaultValue));
+      const flattenedFilteredValue = Object.entries(flattenedUnfilteredValue).reduce(
+        (reduced, [key, value]) => {
+          let toReduce: { [k: string]: any } = reduced;
+          if (key.startsWith(searchedValue)) {
+            toReduce = Object.assign(toReduce, { [key]: value });
+          }
+          return toReduce;
+        },
+        {}
+      );
+      const unflattenedFilteredValue = unflatten(flattenedFilteredValue);
+
+      const prettyValue = unflattenedFilteredValue
+        ? prettifyJsonString(JSON.stringify(unflattenedFilteredValue))
+        : undefined;
+
+      setEditorValue(prettyValue);
+    } else {
+      setIsReadOnly(false);
+      const prettyValue = defaultValue ? prettifyJsonString(defaultValue) : undefined;
+      setEditorValue(prettyValue);
+    }
+  };
+
+  const handleClearSearch = () => {
+    handleSearch(undefined);
+  };
+
   const handleEditorChange = useCallback(
     (value) => {
       isAutoPrettifyOn && handleEditorPrettify();
@@ -222,14 +265,17 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
         <ToolBar
           isValidJson={isValidJson}
           isAutoPrettifyOn={isAutoPrettifyOn}
-          onAutoPrettifyChange={toggleAutoPrettifyOn}
-          onClearClick={handleClearClick}
+          onClear={handleClearSearch}
           onDownloadClick={handleDownloadClick}
           onSaveClick={handleSaveClick}
+          onAutoPrettifyChange={toggleAutoPrettifyOn}
+          onClearClick={handleClearClick}
           onMinifyClick={handleMinifyClick}
           onPrettifyClick={handleEditorPrettify}
           onUploadClick={handleUploadClick}
           onFixClick={handleFixClick}
+          onSearch={handleSearch}
+          isReadOnly={isReadOnly}
         />
       </Stack.Item>
       {showError && (
@@ -269,7 +315,8 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
             onChange={handleEditorChange}
             beforeMount={handleEditorWillMount}
             onValidate={handleEditorValidation}
-            defaultValue={prettyDefaultValue}
+            defaultValue={editorDefaultValue}
+            value={editorValue}
           />
         </Stack.Item>
       </Stack>
