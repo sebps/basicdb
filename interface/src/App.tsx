@@ -47,26 +47,57 @@ const App = (): JSX.Element => {
   const [isSchemaSampleDataOn, toggleSchemaSampleDataOn] = useToggle(false);
   const [schemaValue] = useState<string | undefined>(undefined);
   const [data, setData] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
 
-  const refetch = () => {
-    fetch("http://127.0.0.1:2222/_database")
-      .then((response) => response.json())
-      .then((remoteData) => {
-        setData(JSON.stringify(remoteData.value));
+  const refetch = async () => {
+    try {
+      fetch("http://127.0.0.1:2222/_database")
+        .then((response) => response.json())
+        .catch((err) => console.log(err))
+        .then((remoteData) => {
+          try {
+            setData(JSON.stringify(remoteData.value));
+          } catch (err) {
+            console.log(err);
+            setError(err.toString());
+          }
+        });
+    } catch (err) {
+      console.log(err);
+      setError(err.toString());
+    }
+  };
+
+  const persistPUT = async (key: string, value: string) => {
+    try {
+      const result = await fetch(`http://127.0.0.1:2222/_database/${key.split(".").join("/")}`, {
+        method: "PUT",
+        body: JSON.stringify({ value }),
+      }).then((response) => {
+        return response.json();
       });
+
+      return result.statusCode && result.statusCode === 200;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   };
 
-  const persistPUT = (key: string, value: string) => {
-    fetch(`http://127.0.0.1:2222/_database/${key.split(".").join("/")}`, {
-      method: "PUT",
-      body: JSON.stringify({ value }),
-    });
-  };
+  const persistDELETE = async (key: string) => {
+    try {
+      const result = await fetch(`http://127.0.0.1:2222/_database/${key.split(".").join("/")}`, {
+        method: "DELETE",
+      }).then((response) => {
+        return response.json();
+      });
 
-  const persistDELETE = (key: string) => {
-    fetch(`http://127.0.0.1:2222/_database/${key.split(".").join("/")}`, {
-      method: "DELETE",
-    });
+      return result.statusCode && result.statusCode === 200;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -87,25 +118,41 @@ const App = (): JSX.Element => {
   const handleSave = (lastData: string) => {
     const lastDataJSON = JSON.parse(lastData);
     const dataJSON = JSON.parse(data!);
-    const lastAddedDiff = addedDiff(dataJSON, lastDataJSON);
-    const flattenLastAddedDiff = flattenObject(lastAddedDiff);
 
     const lastDeletedDiff = deletedDiff(dataJSON, lastDataJSON);
     const flattenLastDeletedDiff = flattenObject(lastDeletedDiff);
-    Object.keys(flattenLastDeletedDiff).forEach((key) => {
-      persistDELETE(key);
+    const deletePromises = Object.keys(flattenLastDeletedDiff).map((key) => {
+      return persistDELETE(key);
     });
 
-    Object.keys(flattenLastAddedDiff).forEach((key) => {
+    const lastAddedDiff = addedDiff(dataJSON, lastDataJSON);
+    const flattenLastAddedDiff = flattenObject(lastAddedDiff);
+    const addPromises = Object.keys(flattenLastAddedDiff).map((key) => {
       const value = flattenLastAddedDiff[key];
-      persistPUT(key, value);
+      return persistPUT(key, value);
     });
 
     const lastUpdatedDiff = updatedDiff(dataJSON, lastDataJSON);
     const flattenLastUpdatedDiff = flattenObject(lastUpdatedDiff);
-    Object.keys(flattenLastUpdatedDiff).forEach((key) => {
+    const updatePromises = Object.keys(flattenLastUpdatedDiff).map((key) => {
       const value = flattenLastAddedDiff[key];
-      persistPUT(key, value);
+      return persistPUT(key, value);
+    });
+
+    Promise.all([...addPromises, ...updatePromises, ...deletePromises]).then((results) => {
+      const operationError = results.some((operationSuccess) => {
+        return !operationSuccess;
+      });
+
+      if (operationError) {
+        console.log("operation error");
+        setError("");
+        setError("Save failure.");
+      } else {
+        console.log("operation success");
+        setSuccess("");
+        setSuccess("Save success.");
+      }
     });
   };
 
@@ -129,6 +176,8 @@ const App = (): JSX.Element => {
             // defaultValue={isSchemaSampleDataOn ? SampleData.jsonInput : undefined}
             // onChange={handleValueChange}
             onSave={handleSave}
+            error={error}
+            success={success}
           />
         </Stack.Item>
       </Stack>

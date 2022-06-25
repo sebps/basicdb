@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Stack, IStackStyles } from "@fluentui/react";
+import { Stack, IStackStyles, MessageBar, MessageBarType } from "@fluentui/react";
 import Editor, { useMonaco, BeforeMount, OnMount, OnValidate } from "@monaco-editor/react";
 import dirtyJson from "dirty-json";
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
 import { useToggle } from "../../hooks";
-import { ErrorMessageBar } from "./components/error-message-bar";
 import { TitleBar } from "./components/title-bar";
 import { ToolBar } from "./components/tool-bar";
 import { BorderLine } from "./styles";
@@ -34,6 +33,8 @@ interface JSONEditorProps {
   isSchemaSampleDataOn: boolean;
   onChange?: (value: string) => void;
   onSave?: (value: string) => void;
+  success?: string;
+  error?: string;
 }
 
 interface RefObject extends Monaco.editor.ICodeEditor {
@@ -48,14 +49,28 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
   isSchemaSampleDataOn,
   onChange,
   onSave,
+  success,
+  error,
 }): JSX.Element => {
   const monaco = useMonaco();
-  const [errors, setErrors] = useState<string[]>([]);
   const [isAutoPrettifyOn, toggleAutoPrettifyOn] = useToggle(false);
-
   const [isValidJson, setIsValidJson] = useState<boolean>(false);
   const editorRef = useRef<RefObject | null>(null);
   const prettyDefaultValue = defaultValue ? prettifyJsonString(defaultValue) : undefined;
+  const [showSuccess, toggleShowSuccess] = useToggle(false);
+  const [showError, toggleShowError] = useToggle(false);
+
+  useEffect(() => {
+    if (success) {
+      toggleShowSuccess();
+    }
+  }, [success, toggleShowSuccess]);
+
+  useEffect(() => {
+    if (error) {
+      toggleShowError();
+    }
+  }, [error, toggleShowError]);
 
   const updateEditorLayout = useCallback(() => {
     // Type BUG: editor.IDimension.width & editor.IDimension.height should be "number"
@@ -151,7 +166,6 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
     const hasContent = editorRef.current?.getValue();
     const hasError: boolean = errorMessage.length > 0;
     setIsValidJson(!!hasContent && !hasError);
-    setErrors(errorMessage);
   }, []);
 
   const handleMinifyClick = () => {
@@ -218,6 +232,20 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
           onFixClick={handleFixClick}
         />
       </Stack.Item>
+      {showError && (
+        <Stack.Item>
+          <MessageBar onDismiss={() => toggleShowError()} messageBarType={MessageBarType.error}>
+            {error}
+          </MessageBar>
+        </Stack.Item>
+      )}
+      {showSuccess && (
+        <Stack.Item>
+          <MessageBar onDismiss={() => toggleShowSuccess()} messageBarType={MessageBarType.success}>
+            {success}
+          </MessageBar>
+        </Stack.Item>
+      )}
       <Stack styles={stackStyles}>
         <Stack.Item
           grow
@@ -243,13 +271,6 @@ export const JSONEditor: React.FC<JSONEditorProps> = ({
             onValidate={handleEditorValidation}
             defaultValue={prettyDefaultValue}
           />
-        </Stack.Item>
-        <Stack.Item
-          style={{
-            height: `20vh`,
-          }}
-        >
-          <ErrorMessageBar errors={errors} />
         </Stack.Item>
       </Stack>
     </Stack>
